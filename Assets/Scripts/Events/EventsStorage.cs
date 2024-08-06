@@ -13,14 +13,28 @@ namespace Events
 
         private void Awake()
         {
-            Load();
+            try
+            {
+                Load();
+            }
+            catch (IOException e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         public void AddEvent(Event value)
         {
             _events.Enqueue(value);
 
-            Save();
+            try
+            {
+                Save();
+            }
+            catch (IOException e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         public Event[] GetEvents()
