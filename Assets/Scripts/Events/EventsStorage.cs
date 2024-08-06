@@ -13,28 +13,14 @@ namespace Events
 
         private void Awake()
         {
-            try
-            {
-                Load();
-            }
-            catch (IOException e)
-            {
-                Debug.LogException(e);
-            }
+            Load();
         }
 
         public void AddEvent(Event value)
         {
             _events.Enqueue(value);
 
-            try
-            {
-                Save();
-            }
-            catch (IOException e)
-            {
-                Debug.LogException(e);
-            }
+            Save();
         }
 
         public Event[] GetEvents()
@@ -55,26 +41,40 @@ namespace Events
 
         private void Save()
         {
-            var json = JsonUtility.ToJson(_events);
+            try
+            {
+                var json = JsonUtility.ToJson(_events);
 
-            var tmpFilePath = Path.Combine(Application.persistentDataPath, storagePrefix);
-            Directory.CreateDirectory(Path.GetDirectoryName(tmpFilePath)!);
+                var tmpFilePath = Path.Combine(Application.persistentDataPath, storagePrefix);
+                Directory.CreateDirectory(Path.GetDirectoryName(tmpFilePath)!);
 
-            if (File.Exists(tmpFilePath))
-                File.Delete(tmpFilePath);
+                if (File.Exists(tmpFilePath))
+                    File.Delete(tmpFilePath);
 
-            File.WriteAllText(tmpFilePath, json);
+                File.WriteAllText(tmpFilePath, json);
+            }
+            catch (IOException e)
+            {
+                Debug.LogException(e);
+            }
         }
 
         private void Load()
         {
-            var tmpFilePath = Path.Combine(Application.persistentDataPath, storagePrefix);
+            try
+            {
+                var tmpFilePath = Path.Combine(Application.persistentDataPath, storagePrefix);
 
-            if (!File.Exists(tmpFilePath))
-                return;
+                if (!File.Exists(tmpFilePath))
+                    return;
 
-            var json = File.ReadAllText(tmpFilePath);
-            _events = JsonUtility.FromJson<Queue<Event>>(json)!;
+                var json = File.ReadAllText(tmpFilePath);
+                _events = JsonUtility.FromJson<Queue<Event>>(json)!;
+            }
+            catch (IOException e)
+            {
+                Debug.LogException(e);
+            }
         }
     }
 }
